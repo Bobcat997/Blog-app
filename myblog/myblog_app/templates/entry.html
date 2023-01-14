@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h2>{{ entry.title }}</h2>
+                </div>
+                <div class="card-body">
+                    <p>{{ entry.content|linebreaks }}</p>
+                    <p class="text-muted">Author: {{ entry.user.username }}</p>
+                    <p class="text-muted">Created at: {{ entry.created_at }}</p>
+
+                    <hr>
+
+                    <h3>Leave a Comment</h3>
+                    <form method="post" action="{% url 'add_comment' entry_id=entry.id %}">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="content">Comment:</label>
+                            <textarea class="form-control" name="content" id="content" rows="5"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+                    <hr>
+                    <h3>Comments</h3>
+                    {% if comments %}
+                    <div class="comments">
+                        {% for comment in comments %}
+                        <div class="comment">
+                            <p>{{ comment.content }}</p>
+                            <p class="text-muted">by {{ comment.user.username }}</p>
+                            <p class="text-muted">at {{ comment.created_at }}</p>
+                            {% if request.user == comment.user %}
+                            <button type="button" class="btn btn-danger">
+                                <a href="{% url 'delete_comment' comment.id %}"
+                                   style="color: white; text-decoration: none;">Delete Comment</a>
+                            </button>
+                            {% endif %}
+                        </div>
+                        <hr>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
